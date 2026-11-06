@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Vault | جوهرة الأناقة في خزانة واحدة</title>
-    <!-- Meta SEO Tags محسنة لكل أنواع المنتجات والبيع -->
-    <meta name="description" content="Lumina Vault - جوهرة الأناقة في خزانة واحدة. تسوقي أحدث المنتجات الفاخرة، الملابس، الإكسسوارات، والقطع الثمينة أونلاين بكل سهولة.">
-    <meta name="keywords" content="Lumina Vault, متجر إلكتروني, تسوق اونلاين, عرض منتجات للبيع, ملابس فاخرة, إكسسوارات, قطع ثمينة, شراء منتجات, خزانة الأضواء">
+    <!-- Meta SEO Tags -->
+    <meta name="description" content="Lumina Vault - جوهرة الأناقة في خزانة واحدة. تسوقي أحدث المنتجات الفاخرة، الملابس، الإكسسوارات، والقطع الثمينة أونلاين.">
+    <meta name="keywords" content="Lumina Vault, متجر إلكتروني, تسوق اونلاين, عرض منتجات للبيع, ملابس فاخرة, إكسسوارات, قطع ثمينة">
     <meta name="author" content="Lumina Vault">
     
     <!-- Tailwind CSS & FontAwesome -->
@@ -15,7 +15,7 @@
     <!-- Google Fonts: Tajawal -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
-    <!-- Firebase App & Services (Compat SDKs for Single File HTML) -->
+    <!-- Firebase App (Compat SDKs for Single File HTML) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -129,7 +129,6 @@
     <!-- Navigation Bar -->
     <nav class="glass-nav sticky top-[33px] z-40 px-4 lg:px-12 py-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <!-- Brand Logo -->
             <a href="#" class="flex items-center gap-3 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-yellow-500 to-amber-200 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-yellow-500/20 group-hover:scale-110 transition-transform">
                     L
@@ -140,9 +139,7 @@
                 </div>
             </a>
 
-            <!-- Nav Actions -->
             <div class="flex items-center gap-3">
-                <!-- Cart Button -->
                 <button onclick="openCartModal()" class="relative px-3.5 py-2 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 text-xs font-bold hover:bg-yellow-500/20 transition-all flex items-center gap-2">
                     <i class="fas fa-shopping-bag text-sm"></i>
                     <span>سلة الطلبات</span>
@@ -160,7 +157,7 @@
         </div>
     </nav>
 
-    <!-- HERO / ABOUT US SECTION -->
+    <!-- HERO SECTION -->
     <section class="relative px-4 lg:px-12 pt-16 pb-20 max-w-7xl mx-auto text-center">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card text-xs font-bold text-yellow-300 mb-6 border-yellow-500/30">
             <i class="fas fa-sparkles"></i> تشكيلة واسعة من أجود المنتجات والقطع الفاخرة
@@ -202,7 +199,6 @@
             </div>
         </div>
 
-        <!-- Products Grid -->
         <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </section>
 
@@ -253,11 +249,11 @@
                 </form>
             </div>
 
-            <!-- Admin Panel View -->
+            <!-- Admin Panel View (Add Product with Multiple File Upload) -->
             <div id="adminPanelView" class="hidden">
                 <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/10">
                     <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fas fa-plus-circle text-yellow-400"></i> إضافة منتج جديد (رفع ملف صورة)
+                        <i class="fas fa-plus-circle text-yellow-400"></i> إضافة منتج جديد (رفع عدة صور)
                     </h3>
                     <button onclick="adminLogout()" class="text-xs text-red-400 hover:underline">تسجيل الخروج</button>
                 </div>
@@ -274,8 +270,8 @@
                             <input type="text" id="prodPrice" required placeholder="مثال: 450 جنيه" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">اختر صورة المنتج (من جهازك)</label>
-                            <input type="file" id="prodImageFile" accept="image/*" required class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">اختر صور المنتج (يمكنك تحديد عدة صور معاً)</label>
+                            <input type="file" id="prodImageFiles" accept="image/*" multiple required class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
                         </div>
                     </div>
 
@@ -294,7 +290,7 @@
 
     <!-- PRODUCT DETAIL MODAL -->
     <div id="productDetailModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-card w-full max-w-xl rounded-3xl overflow-hidden relative border border-white/20">
+        <div class="glass-card w-full max-w-xl rounded-3xl overflow-hidden relative border border-white/20 max-h-[90vh] overflow-y-auto">
             <button onclick="closeProductModal()" class="absolute top-4 left-4 z-10 w-9 h-9 bg-black/60 rounded-full text-white flex items-center justify-center hover:bg-red-500 transition-colors">
                 <i class="fas fa-times"></i>
             </button>
@@ -316,7 +312,9 @@
 
     <!-- FIREBASE & APPLICATION LOGIC -->
     <script>
-        // Your web app's Firebase configuration
+        // ==========================================
+        // 🛠️ إعدادات مشروع Firebase
+        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyC-tCm6Vl8FWbUEouKagzLDeJs9qCEPE2E",
             authDomain: "lumina-vault-e25e9.firebaseapp.com",
@@ -326,7 +324,7 @@
             appId: "1:300083027193:web:bce438ab0dabc65bc35628"
         };
 
-        // Initialize Firebase Compat
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -358,6 +356,7 @@
             updateCartBadge();
             init3DCanvas();
 
+            // مراقبة حالة تسجيل الدخول عبر Firebase Auth
             auth.onAuthStateChanged(user => {
                 if (user) {
                     isAdminAuthenticated = true;
@@ -367,6 +366,7 @@
             });
         });
 
+        // جلب المنتجات بشكل لحظي (Real-time) من قاعدة بيانات Firestore
         function initRealtimeProducts() {
             db.collection("products").onSnapshot((snapshot) => {
                 products = [];
@@ -455,52 +455,65 @@
                 return;
             }
 
-            grid.innerHTML = products.map(prod => `
-                <div class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between relative">
-                    ${isAdminAuthenticated ? `
-                        <button onclick="deleteProduct(event, '${prod.id}')" class="absolute top-3 left-3 z-20 bg-red-600/85 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-lg" title="حذف المنتج">
-                            <i class="fas fa-trash-alt text-xs"></i>
-                        </button>
-                    ` : ''}
-                    
-                    <div onclick="openProductModal('${prod.id}')" class="cursor-pointer">
-                        <div class="relative h-64 overflow-hidden bg-black/40">
-                            <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
-                            <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-white/10 text-yellow-300 text-xs font-bold px-3 py-1 rounded-full">
-                                ${escapeHtml(prod.price)}
-                            </span>
+            grid.innerHTML = products.map(prod => {
+                // دعم الصور المتعددة أو الصورة القديمة كاحتياط
+                const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
+                const imagesCount = (prod.images && prod.images.length > 1) ? prod.images.length : 0;
+
+                return `
+                    <div class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between relative">
+                        ${isAdminAuthenticated ? `
+                            <button onclick="deleteProduct(event, '${prod.id}')" class="absolute top-3 left-3 z-20 bg-red-600/85 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-lg" title="حذف المنتج">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        ` : ''}
+                        
+                        <div onclick="openProductModal('${prod.id}')" class="cursor-pointer">
+                            <div class="relative h-64 overflow-hidden bg-black/45">
+                                <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
+                                <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-white/10 text-yellow-300 text-xs font-bold px-3 py-1 rounded-full">
+                                    ${escapeHtml(prod.price)}
+                                </span>
+                                ${imagesCount > 0 ? `
+                                    <span class="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md border border-white/15 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                        <i class="fas fa-images text-yellow-400"></i> ${imagesCount} صور
+                                    </span>
+                                ` : ''}
+                            </div>
+
+                            <div class="p-5">
+                                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors line-clamp-1">${escapeHtml(prod.name)}</h3>
+                                <p class="text-slate-400 text-xs line-clamp-2 leading-relaxed mb-4">${escapeHtml(prod.description)}</p>
+                            </div>
                         </div>
 
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors line-clamp-1">${escapeHtml(prod.name)}</h3>
-                            <p class="text-slate-400 text-xs line-clamp-2 leading-relaxed mb-4">${escapeHtml(prod.description)}</p>
+                        <div class="p-5 pt-0 flex gap-2">
+                            <button onclick="addToCart(event, '${prod.id}')" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-yellow-400 border border-white/20 font-bold transition-all text-sm flex items-center justify-center" title="إضافة إلى السلة">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                            <button onclick="sendWhatsAppOrder(event, '${escapeHtml(prod.name)}', '${escapeHtml(prod.price)}')" class="btn-glow-wa flex-1 py-3 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2">
+                                <i class="fab fa-whatsapp text-lg"></i>
+                                <span>طلب فوري</span>
+                            </button>
                         </div>
                     </div>
-
-                    <div class="p-5 pt-0 flex gap-2">
-                        <button onclick="addToCart(event, '${prod.id}')" class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-yellow-400 border border-white/20 font-bold transition-all text-sm flex items-center justify-center" title="إضافة إلى السلة">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
-                        <button onclick="sendWhatsAppOrder(event, '${escapeHtml(prod.name)}', '${escapeHtml(prod.price)}')" class="btn-glow-wa flex-1 py-3 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2">
-                            <i class="fab fa-whatsapp text-lg"></i>
-                            <span>طلب فوري</span>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
+        // CART FUNCTIONS
         function addToCart(e, id) {
             if (e) e.stopPropagation();
             const prod = products.find(p => p.id === id);
             if (!prod) return;
 
+            const cartImage = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
             const existing = cart.find(item => item.id === id);
             if (existing) {
                 existing.qty = (existing.qty || 1) + 1;
             } else {
-                cart.push({ ...prod, qty: 1 });
+                cart.push({ ...prod, image: cartImage, qty: 1 });
             }
 
             localStorage.setItem('lumina_cart', JSON.stringify(cart));
@@ -580,6 +593,7 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
 
+        // FIREBASE AUTH & ADMIN CONTROLS
         function openAdminModal() {
             document.getElementById('adminModal').classList.remove('hidden');
             if (isAdminAuthenticated) {
@@ -625,6 +639,7 @@
             });
         }
 
+        // ADD PRODUCT WITH MULTIPLE FILE UPLOAD TO FIRESTORE
         function handleAddProduct(e) {
             e.preventDefault();
             if (!isAdminAuthenticated) return;
@@ -632,46 +647,60 @@
             const name = document.getElementById('prodName').value;
             const price = document.getElementById('prodPrice').value;
             const desc = document.getElementById('prodDesc').value;
-            const fileInput = document.getElementById('prodImageFile');
+            const fileInput = document.getElementById('prodImageFiles');
             const submitBtn = document.getElementById('submitBtn');
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                submitBtn.innerText = "جاري رفع الصورة ونشر المنتج...";
+            if (fileInput.files && fileInput.files.length > 0) {
+                submitBtn.innerText = "جاري قراءة ورفع الصور...";
                 submitBtn.disabled = true;
 
-                reader.onload = function (event) {
-                    const base64Image = event.target.result;
+                const files = Array.from(fileInput.files);
+                let base64Images = [];
+                let loadedCount = 0;
 
-                    db.collection("products").add({
-                        name: name,
-                        price: price,
-                        description: desc,
-                        image: base64Image,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(() => {
-                        alert('تمت إضافة المنتج بنجاح إلى قاعدة بيانات Firebase!');
-                        closeAdminModal();
-                        e.target.reset();
-                        submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
-                        submitBtn.disabled = false;
-                    })
-                    .catch((error) => {
-                        alert("حدث خطأ أثناء حفظ المنتج: " + error.message);
-                        submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
-                        submitBtn.disabled = false;
-                    });
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        base64Images[index] = event.target.result;
+                        loadedCount++;
+
+                        // عند الانتهاء من قراءة جميع الصور وتحويلها
+                        if (loadedCount === files.length) {
+                            db.collection("products").add({
+                                name: name,
+                                price: price,
+                                description: desc,
+                                images: base64Images,
+                                image: base64Images[0], // صورة رئيسية افتراضية للتوافقية
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            })
+                            .then(() => {
+                                alert('تمت إضافة المنتج ومعرض الصور بنجاح إلى قاعدة بيانات Firebase!');
+                                closeAdminModal();
+                                e.target.reset();
+                                submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
+                                submitBtn.disabled = false;
+                            })
+                            .catch((error) => {
+                                alert("حدث خطأ أثناء حفظ المنتج: " + error.message);
+                                submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
+                                submitBtn.disabled = false;
+                            });
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                alert("يرجى اختيار صورة واحدة على الأقل!");
             }
         }
 
+        // DELETE PRODUCT FROM FIRESTORE
         function deleteProduct(e, id) {
             if (e) e.stopPropagation();
             if (!isAdminAuthenticated) return;
 
-            if (confirm('هل أنتِ متأكدة من إزالة هذا المنتج نهائياً من قاعدة البيانات السحابية؟')) {
+            if (confirm('هل أنتِ متأكدة من إزالة هذا المنتج نهائياً من قاعدة بيانات السحابية؟')) {
                 db.collection("products").doc(id).delete()
                 .then(() => {
                     cart = cart.filter(item => item.id !== id);
@@ -685,23 +714,44 @@
             }
         }
 
+        // PRODUCT DETAIL MODAL WITH MODERN GALLERY VIEWER
         function openProductModal(id) {
             const prod = products.find(p => p.id === id);
             if (!prod) return;
 
+            const imgList = (prod.images && prod.images.length > 0) ? prod.images : [prod.image];
+
+            let thumbnailsHtml = imgList.map((img, index) => `
+                <img src="${escapeHtml(img)}" onclick="changeMainImage('${escapeHtml(img)}', this)" 
+                     class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 ${index === 0 ? 'border-yellow-400' : 'border-transparent'} hover:opacity-100 opacity-70 transition-all shadow-md">
+            `).join('');
+
             const content = document.getElementById('modalProductContent');
             content.innerHTML = `
-                <div class="h-72 overflow-hidden relative">
-                    <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-3">
+                <div class="p-6 md:p-8 space-y-5">
+                    <!-- الصورة الكبرى الرئيسية -->
+                    <div class="relative w-full h-72 md:h-80 rounded-2xl overflow-hidden bg-black/45 border border-white/10">
+                        <img id="mainProductImage" src="${escapeHtml(imgList[0])}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover transition-all duration-300">
+                    </div>
+
+                    <!-- معرض الصور المصغرة العصري -->
+                    ${imgList.length > 1 ? `
+                        <div>
+                            <p class="text-xs text-slate-400 mb-2 font-medium">صور إضافية (اضغطي للتكبير والاستعراض):</p>
+                            <div class="flex gap-2 overflow-x-auto py-1">
+                                ${thumbnailsHtml}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="flex justify-between items-center">
                         <h3 class="text-2xl font-black text-white">${escapeHtml(prod.name)}</h3>
                         <span class="text-xl font-bold text-yellow-400">${escapeHtml(prod.price)}</span>
                     </div>
-                    <p class="text-slate-300 text-sm leading-relaxed mb-6">${escapeHtml(prod.description)}</p>
-                    <div class="flex gap-3">
+
+                    <p class="text-slate-300 text-sm leading-relaxed">${escapeHtml(prod.description)}</p>
+
+                    <div class="flex gap-3 pt-2">
                         <button onclick="addToCart(event, '${prod.id}'); closeProductModal();" class="px-5 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-yellow-400 border border-white/20 font-bold transition-all text-sm flex items-center justify-center gap-2">
                             <i class="fas fa-cart-plus"></i>
                             <span>إضافة للسلة</span>
@@ -719,6 +769,16 @@
                 </div>
             `;
             document.getElementById('productDetailModal').classList.remove('hidden');
+        }
+
+        // دالة تبديل الصورة الرئيسية عند الضغط على الصورة المصغرة في المعرض
+        function changeMainImage(imgSrc, element) {
+            document.getElementById('mainProductImage').src = imgSrc;
+            const thumbnails = element.parentElement.querySelectorAll('img');
+            thumbnails.forEach(img => img.classList.remove('border-yellow-400'));
+            thumbnails.forEach(img => img.classList.add('border-transparent'));
+            element.classList.remove('border-transparent');
+            element.classList.add('border-yellow-400');
         }
 
         function closeProductModal() {
