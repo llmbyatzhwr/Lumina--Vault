@@ -356,7 +356,6 @@
             updateCartBadge();
             init3DCanvas();
 
-            // مراقبة حالة تسجيل الدخول عبر Firebase Auth
             auth.onAuthStateChanged(user => {
                 if (user) {
                     isAdminAuthenticated = true;
@@ -366,7 +365,6 @@
             });
         });
 
-        // جلب المنتجات بشكل لحظي (Real-time) من قاعدة بيانات Firestore
         function initRealtimeProducts() {
             db.collection("products").onSnapshot((snapshot) => {
                 products = [];
@@ -456,7 +454,6 @@
             }
 
             grid.innerHTML = products.map(prod => {
-                // دعم الصور المتعددة أو الصورة القديمة كاحتياط
                 const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
                 const imagesCount = (prod.images && prod.images.length > 1) ? prod.images.length : 0;
 
@@ -502,7 +499,6 @@
             }).join('');
         }
 
-        // CART FUNCTIONS
         function addToCart(e, id) {
             if (e) e.stopPropagation();
             const prod = products.find(p => p.id === id);
@@ -593,7 +589,6 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
 
-        // FIREBASE AUTH & ADMIN CONTROLS
         function openAdminModal() {
             document.getElementById('adminModal').classList.remove('hidden');
             if (isAdminAuthenticated) {
@@ -639,63 +634,70 @@
             });
         }
 
-        // ADD PRODUCT WITH MULTIPLE FILE UPLOAD TO FIRESTORE
-        function handleAddProduct(e) {
-            e.preventDefault();
-            if (!isAdminAuthenticated) return;
+        // ADD PRODUCT WITH SUCCESS BUTTON FEEDBACK
+       // [اضعي هذا الكود الجديد مكان الدالة القديمة]
+function handleAddProduct(e) {
+    e.preventDefault();
+    if (!isAdminAuthenticated) return;
 
-            const name = document.getElementById('prodName').value;
-            const price = document.getElementById('prodPrice').value;
-            const desc = document.getElementById('prodDesc').value;
-            const fileInput = document.getElementById('prodImageFiles');
-            const submitBtn = document.getElementById('submitBtn');
+    const name = document.getElementById('prodName').value;
+    const price = document.getElementById('prodPrice').value;
+    const desc = document.getElementById('prodDesc').value;
+    const fileInput = document.getElementById('prodImageFiles');
+    const submitBtn = document.getElementById('submitBtn');
 
-            if (fileInput.files && fileInput.files.length > 0) {
-                submitBtn.innerText = "جاري قراءة ورفع الصور...";
-                submitBtn.disabled = true;
+    if (fileInput.files && fileInput.files.length > 0) {
+        submitBtn.innerText = "جاري قراءة ورفع الصور...";
+        submitBtn.disabled = true;
 
-                const files = Array.from(fileInput.files);
-                let base64Images = [];
-                let loadedCount = 0;
+        const files = Array.from(fileInput.files);
+        let base64Images = [];
+        let loadedCount = 0;
 
-                files.forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = function (event) {
-                        base64Images[index] = event.target.result;
-                        loadedCount++;
+        files.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                base64Images[index] = event.target.result;
+                loadedCount++;
 
-                        // عند الانتهاء من قراءة جميع الصور وتحويلها
-                        if (loadedCount === files.length) {
-                            db.collection("products").add({
-                                name: name,
-                                price: price,
-                                description: desc,
-                                images: base64Images,
-                                image: base64Images[0], // صورة رئيسية افتراضية للتوافقية
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            })
-                            .then(() => {
-                                alert('تمت إضافة المنتج ومعرض الصور بنجاح إلى قاعدة بيانات Firebase!');
-                                closeAdminModal();
-                                e.target.reset();
-                                submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
-                                submitBtn.disabled = false;
-                            })
-                            .catch((error) => {
-                                alert("حدث خطأ أثناء حفظ المنتج: " + error.message);
-                                submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
-                                submitBtn.disabled = false;
-                            });
+                if (loadedCount === files.length) {
+                    db.collection("products").add({
+                        name: name,
+                        price: price,
+                        description: desc,
+                        images: base64Images,
+                        image: base64Images[0],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                    .then(() => {
+                        // إعادة الزر لحالته الطبيعية وإغلاق لوحة الإدارة
+                        submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
+                        submitBtn.disabled = false;
+                        
+                        closeAdminModal();
+                        e.target.reset();
+
+                        // رسالة نجاح واضحة ومؤكدة تظهر للمستخدم فوراً
+                        alert("✨ تم رفع المنتج ومعرض الصور بنجاح إلى قاعدة البيانات!");
+                    })
+                    .catch((error) => {
+                        console.error("خطأ الحفظ:", error);
+                        if (error.message && error.message.includes("exceeds the maximum allowed size")) {
+                            alert("❌ حجم الصور كبير جداً! يرجى اختيار صور أصغر حجماً لتتجاوز حدود قاعدة البيانات.");
+                        } else {
+                            alert("حدث خطأ أثناء حفظ المنتج: " + error.message);
                         }
-                    };
-                    reader.readAsDataURL(file);
-                });
-            } else {
-                alert("يرجى اختيار صورة واحدة على الأقل!");
-            }
-        }
-
-        // DELETE PRODUCT FROM FIRESTORE
+                        submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
+                        submitBtn.disabled = false;
+                    });
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        alert("يرجى اختيار صورة واحدة على الأقل!");
+    }
+}
         function deleteProduct(e, id) {
             if (e) e.stopPropagation();
             if (!isAdminAuthenticated) return;
@@ -714,7 +716,6 @@
             }
         }
 
-        // PRODUCT DETAIL MODAL WITH MODERN GALLERY VIEWER
         function openProductModal(id) {
             const prod = products.find(p => p.id === id);
             if (!prod) return;
@@ -729,12 +730,10 @@
             const content = document.getElementById('modalProductContent');
             content.innerHTML = `
                 <div class="p-6 md:p-8 space-y-5">
-                    <!-- الصورة الكبرى الرئيسية -->
                     <div class="relative w-full h-72 md:h-80 rounded-2xl overflow-hidden bg-black/45 border border-white/10">
                         <img id="mainProductImage" src="${escapeHtml(imgList[0])}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover transition-all duration-300">
                     </div>
 
-                    <!-- معرض الصور المصغرة العصري -->
                     ${imgList.length > 1 ? `
                         <div>
                             <p class="text-xs text-slate-400 mb-2 font-medium">صور إضافية (اضغطي للتكبير والاستعراض):</p>
@@ -771,7 +770,6 @@
             document.getElementById('productDetailModal').classList.remove('hidden');
         }
 
-        // دالة تبديل الصورة الرئيسية عند الضغط على الصورة المصغرة في المعرض
         function changeMainImage(imgSrc, element) {
             document.getElementById('mainProductImage').src = imgSrc;
             const thumbnails = element.parentElement.querySelectorAll('img');
