@@ -4,38 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Vault | جوهرة الأناقة في خزانة واحدة</title>
-    <!-- Meta SEO Tags -->
     <meta name="description" content="Lumina Vault - جوهرة الأناقة في خزانة واحدة. تسوقي أحدث المنتجات الفاخرة، الملابس، الإكسسوارات، والقطع الثمينة أونلاين.">
     <meta name="keywords" content="Lumina Vault, متجر إلكتروني, تسوق اونلاين, عرض منتجات للبيع, ملابس فاخرة, إكسسوارات, قطع ثمينة">
     <meta name="author" content="Lumina Vault">
     
-    <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Tajawal -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
-    <!-- Firebase App (Compat SDKs for Single File HTML) -->
+    <!-- Firebase App (Compat SDKs) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Tajawal', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Tajawal', 'sans-serif'] },
                     colors: {
-                        gold: {
-                            100: '#fef9c3',
-                            300: '#fde047',
-                            500: '#eab308',
-                            600: '#ca8a04',
-                            700: '#a16207',
-                        },
-                        darkBg: '#090d16',
+                        gold: { 100: '#fef9c3', 300: '#fde047', 500: '#eab308', 600: '#ca8a04', 700: '#a16207' },
+                        darkBg: '#090d16'
                     }
                 }
             }
@@ -43,13 +31,7 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #070a12;
-            color: #f8fafc;
-            overflow-x: hidden;
-        }
-
+        body { font-family: 'Tajawal', sans-serif; background-color: #070a12; color: #f8fafc; overflow-x: hidden; }
         .glass-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(16px);
@@ -58,75 +40,32 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(234, 179, 8, 0.4);
             transform: translateY(-6px) scale(1.02);
             box-shadow: 0 20px 40px rgba(234, 179, 8, 0.15), 0 0 20px rgba(255, 255, 255, 0.1);
         }
-
-        .glass-nav {
-            background: rgba(7, 10, 18, 0.75);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        #canvas3d {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .marquee-content {
-            display: inline-block;
-            animation: marquee 35s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-50%); }
-        }
-
-        .btn-glow-fb {
-            background: linear-gradient(135deg, #1877f2, #0052cc);
-            box-shadow: 0 0 15px rgba(24, 119, 242, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-glow-fb:hover {
-            box-shadow: 0 0 25px rgba(24, 119, 242, 0.8);
-            transform: scale(1.04);
-        }
-
-        .btn-glow-wa {
-            background: linear-gradient(135deg, #25d366, #128c7e);
-            box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
-            transition: all 0.3s ease;
-        }
-        .btn-glow-wa:hover {
-            box-shadow: 0 0 25px rgba(37, 211, 102, 0.7);
-            transform: translateY(-2px);
-        }
+        .glass-nav { background: rgba(7, 10, 18, 0.75); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        #canvas3d { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+        .marquee-container { overflow: hidden; white-space: nowrap; }
+        .marquee-content { display: inline-block; animation: marquee 35s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+        .btn-glow-fb { background: linear-gradient(135deg, #1877f2, #0052cc); box-shadow: 0 0 15px rgba(24, 119, 242, 0.4); transition: all 0.3s ease; }
+        .btn-glow-fb:hover { box-shadow: 0 0 25px rgba(24, 119, 242, 0.8); transform: scale(1.04); }
+        .btn-glow-wa { background: linear-gradient(135deg, #25d366, #128c7e); box-shadow: 0 0 15px rgba(37, 211, 102, 0.3); transition: all 0.3s ease; }
+        .btn-glow-wa:hover { box-shadow: 0 0 25px rgba(37, 211, 102, 0.7); transform: translateY(-2px); }
     </style>
 </head>
 <body class="relative min-h-screen">
 
-    <!-- Interactive 3D Animated Canvas Scene -->
     <canvas id="canvas3d"></canvas>
 
-    <!-- SEO Keywords Marquee Ticker -->
     <div class="bg-black/60 border-b border-white/10 py-2 text-xs font-medium text-slate-300 marquee-container sticky top-0 z-50 backdrop-blur-md">
         <div class="marquee-content flex gap-8 items-center" id="seoTicker"></div>
     </div>
 
-    <!-- Navigation Bar -->
+    <!-- Navigation Bar (بدون زر الإدارة) -->
     <nav class="glass-nav sticky top-[33px] z-40 px-4 lg:px-12 py-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <a href="#" class="flex items-center gap-3 group">
@@ -149,10 +88,6 @@
                 <a href="#products" class="hidden md:inline-flex items-center gap-2 text-sm text-slate-300 hover:text-yellow-400 transition-colors">
                     <i class="fas fa-gem text-yellow-400"></i> المنتجات
                 </a>
-                
-                <button onclick="openAdminModal()" class="px-3 py-1.5 rounded-lg border border-white/20 text-xs text-slate-300 hover:bg-white/10 transition-colors flex items-center gap-2">
-                    <i class="fas fa-lock text-yellow-400"></i> لوحة الإدارة
-                </button>
             </div>
         </div>
     </nav>
@@ -191,7 +126,7 @@
                     <span class="w-3 h-8 bg-yellow-400 rounded-full inline-block"></span>
                     معرض المنتجات السحابي
                 </h2>
-                <p class="text-slate-400 text-sm mt-2">متصل بقاعدة بيانات Firebase - تسوقي واطلبي عبر الواتساب</p>
+                <p class="text-slate-400 text-sm mt-2">تسوقي واطلبي عبر الواتساب بكل سهولة</p>
             </div>
             
             <div class="flex gap-2 text-xs font-semibold">
@@ -224,70 +159,6 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL (Firebase Auth & File Upload) -->
-    <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
-        <div class="glass-card w-full max-w-2xl rounded-3xl p-6 md:p-8 relative border border-white/20 max-h-[90vh] overflow-y-auto">
-            <button onclick="closeAdminModal()" class="absolute top-6 left-6 text-slate-400 hover:text-white text-xl">
-                <i class="fas fa-times"></i>
-            </button>
-
-            <!-- Login View (Firebase Email & Password) -->
-            <div id="adminLoginView" class="text-center py-8">
-                <div class="w-16 h-16 bg-yellow-500/20 border border-yellow-400/40 rounded-2xl flex items-center justify-center mx-auto mb-4 text-yellow-400 text-2xl">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-2">تسجيل دخول المالك عبر Firebase</h3>
-                <p class="text-slate-400 text-sm mb-6">أدخلي بريدك الإلكتروني وكلمة المرور المسجلة في منصة Firebase</p>
-
-                <form onsubmit="handleFirebaseLogin(event)" class="max-w-md mx-auto space-y-4">
-                    <input type="email" id="adminEmail" placeholder="البريد الإلكتروني للإدارة" required class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white text-center focus:outline-none focus:border-yellow-400 text-sm">
-                    <input type="password" id="adminPassword" placeholder="كلمة المرور" required class="w-full bg-black/50 border border-white/20 rounded-xl px-4 py-3 text-white text-center tracking-widest focus:outline-none focus:border-yellow-400 text-sm">
-                    <button type="submit" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl transition-colors">
-                        دخول لوحة التحكم
-                    </button>
-                    <p id="loginError" class="text-red-400 text-xs hidden"></p>
-                </form>
-            </div>
-
-            <!-- Admin Panel View (Add Product with Multiple File Upload) -->
-            <div id="adminPanelView" class="hidden">
-                <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/10">
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fas fa-plus-circle text-yellow-400"></i> إضافة منتج جديد (رفع عدة صور)
-                    </h3>
-                    <button onclick="adminLogout()" class="text-xs text-red-400 hover:underline">تسجيل الخروج</button>
-                </div>
-
-                <form onsubmit="handleAddProduct(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">اسم المنتج</label>
-                        <input type="text" id="prodName" required placeholder="مثال: فستان سهرة / طقم إكسسوارات" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">السعر</label>
-                            <input type="text" id="prodPrice" required placeholder="مثال: 450 جنيه" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">اختر صور المنتج (يمكنك تحديد عدة صور معاً)</label>
-                            <input type="file" id="prodImageFiles" accept="image/*" multiple required class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">وصف المنتج وتفاصيله</label>
-                        <textarea id="prodDesc" rows="3" required placeholder="تفاصيل الخامات أو المقاسات المتوفرة..." class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400"></textarea>
-                    </div>
-
-                    <button type="submit" id="submitBtn" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-amber-500 hover:opacity-90 text-black font-bold rounded-xl transition-all shadow-lg shadow-yellow-500/25">
-                        رفع ونشر المنتج في قاعدة البيانات
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- PRODUCT DETAIL MODAL -->
     <div id="productDetailModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="glass-card w-full max-w-xl rounded-3xl overflow-hidden relative border border-white/20 max-h-[90vh] overflow-y-auto">
@@ -310,11 +181,8 @@
         </div>
     </footer>
 
-    <!-- FIREBASE & APPLICATION LOGIC -->
+    <!-- CLIENT APPLICATION LOGIC -->
     <script>
-        // ==========================================
-        // 🛠️ إعدادات مشروع Firebase
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyC-tCm6Vl8FWbUEouKagzLDeJs9qCEPE2E",
             authDomain: "lumina-vault-e25e9.firebaseapp.com",
@@ -324,19 +192,16 @@
             appId: "1:300083027193:web:bce438ab0dabc65bc35628"
         };
 
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
 
         const WHATSAPP_NUMBER = "201505368073";
-        let isAdminAuthenticated = false;
         let products = [];
         let cart = JSON.parse(localStorage.getItem('lumina_cart')) || [];
 
         const seoKeywords = [
             "✨ Lumina Vault", "💎 جوهرة الأناقة في خزانة واحدة", "👑 خزانة الأضواء",
-            "👗 تسوقي أفخم الملابس والقطع", "🛍️ عرض منتجات للبيع أونلاين عبر Firebase", "🌟 تسوقي أحدث المنتجات الحصرية",
+            "👗 تسوقي أفخم الملابس والقطع", "🛍️ عرض منتجات للبيع أونلاين", "🌟 تسوقي أحدث المنتجات الحصرية",
             "🔥 اطلبي عدة طلبات معاً عبر الواتساب", "✨ تشكيلة واسعة من أروع المنتجات"
         ];
 
@@ -355,14 +220,6 @@
             initRealtimeProducts();
             updateCartBadge();
             init3DCanvas();
-
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    isAdminAuthenticated = true;
-                } else {
-                    isAdminAuthenticated = false;
-                }
-            });
         });
 
         function initRealtimeProducts() {
@@ -373,7 +230,7 @@
                 });
                 renderProducts();
             }, (error) => {
-                console.error("خطأ في جلب البيانات من قاعدة البيانات: ", error);
+                console.error("خطأ في جلب البيانات: ", error);
             });
         }
 
@@ -447,7 +304,7 @@
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 glass-card rounded-2xl">
                         <i class="fas fa-box-open text-4xl text-slate-500 mb-3"></i>
-                        <p class="text-slate-400 font-medium">لا توجد منتجات معروضة حالياً في قاعدة البيانات.</p>
+                        <p class="text-slate-400 font-medium">لا توجد منتجات معروضة حالياً.</p>
                     </div>
                 `;
                 return;
@@ -459,12 +316,6 @@
 
                 return `
                     <div class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between relative">
-                        ${isAdminAuthenticated ? `
-                            <button onclick="deleteProduct(event, '${prod.id}')" class="absolute top-3 left-3 z-20 bg-red-600/85 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors shadow-lg" title="حذف المنتج">
-                                <i class="fas fa-trash-alt text-xs"></i>
-                            </button>
-                        ` : ''}
-                        
                         <div onclick="openProductModal('${prod.id}')" class="cursor-pointer">
                             <div class="relative h-64 overflow-hidden bg-black/45">
                                 <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
@@ -589,133 +440,6 @@
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
         }
 
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.remove('hidden');
-            if (isAdminAuthenticated) {
-                document.getElementById('adminLoginView').classList.add('hidden');
-                document.getElementById('adminPanelView').classList.remove('hidden');
-            } else {
-                document.getElementById('adminLoginView').classList.remove('hidden');
-                document.getElementById('adminPanelView').classList.add('hidden');
-            }
-        }
-
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.add('hidden');
-        }
-
-        function handleFirebaseLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            const errorMsg = document.getElementById('loginError');
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    isAdminAuthenticated = true;
-                    errorMsg.classList.add('hidden');
-                    document.getElementById('adminLoginView').classList.add('hidden');
-                    document.getElementById('adminPanelView').classList.remove('hidden');
-                    document.getElementById('adminPassword').value = '';
-                    renderProducts();
-                })
-                .catch((error) => {
-                    errorMsg.innerText = "خطأ في البريد أو كلمة المرور: " + error.message;
-                    errorMsg.classList.remove('hidden');
-                });
-        }
-
-        function adminLogout() {
-            auth.signOut().then(() => {
-                isAdminAuthenticated = false;
-                document.getElementById('adminPanelView').classList.add('hidden');
-                document.getElementById('adminLoginView').classList.remove('hidden');
-                renderProducts();
-            });
-        }
-
-        // ADD PRODUCT WITH SUCCESS BUTTON FEEDBACK
-       // [اضعي هذا الكود الجديد مكان الدالة القديمة]
-function handleAddProduct(e) {
-    e.preventDefault();
-    if (!isAdminAuthenticated) return;
-
-    const name = document.getElementById('prodName').value;
-    const price = document.getElementById('prodPrice').value;
-    const desc = document.getElementById('prodDesc').value;
-    const fileInput = document.getElementById('prodImageFiles');
-    const submitBtn = document.getElementById('submitBtn');
-
-    if (fileInput.files && fileInput.files.length > 0) {
-        submitBtn.innerText = "جاري قراءة ورفع الصور...";
-        submitBtn.disabled = true;
-
-        const files = Array.from(fileInput.files);
-        let base64Images = [];
-        let loadedCount = 0;
-
-        files.forEach((file, index) => {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                base64Images[index] = event.target.result;
-                loadedCount++;
-
-                if (loadedCount === files.length) {
-                    db.collection("products").add({
-                        name: name,
-                        price: price,
-                        description: desc,
-                        images: base64Images,
-                        image: base64Images[0],
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(() => {
-                        // إعادة الزر لحالته الطبيعية وإغلاق لوحة الإدارة
-                        submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
-                        submitBtn.disabled = false;
-                        
-                        closeAdminModal();
-                        e.target.reset();
-
-                        // رسالة نجاح واضحة ومؤكدة تظهر للمستخدم فوراً
-                        alert("✨ تم رفع المنتج ومعرض الصور بنجاح إلى قاعدة البيانات!");
-                    })
-                    .catch((error) => {
-                        console.error("خطأ الحفظ:", error);
-                        if (error.message && error.message.includes("exceeds the maximum allowed size")) {
-                            alert("❌ حجم الصور كبير جداً! يرجى اختيار صور أصغر حجماً لتتجاوز حدود قاعدة البيانات.");
-                        } else {
-                            alert("حدث خطأ أثناء حفظ المنتج: " + error.message);
-                        }
-                        submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
-                        submitBtn.disabled = false;
-                    });
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-    } else {
-        alert("يرجى اختيار صورة واحدة على الأقل!");
-    }
-}
-        function deleteProduct(e, id) {
-            if (e) e.stopPropagation();
-            if (!isAdminAuthenticated) return;
-
-            if (confirm('هل أنتِ متأكدة من إزالة هذا المنتج نهائياً من قاعدة بيانات السحابية؟')) {
-                db.collection("products").doc(id).delete()
-                .then(() => {
-                    cart = cart.filter(item => item.id !== id);
-                    localStorage.setItem('lumina_cart', JSON.stringify(cart));
-                    updateCartBadge();
-                    closeProductModal();
-                })
-                .catch((error) => {
-                    alert("خطأ أثناء الحذف: " + error.message);
-                });
-            }
-        }
-
         function openProductModal(id) {
             const prod = products.find(p => p.id === id);
             if (!prod) return;
@@ -759,11 +483,6 @@ function handleAddProduct(e) {
                             <i class="fab fa-whatsapp text-lg"></i>
                             <span>طلب فوري</span>
                         </button>
-                        ${isAdminAuthenticated ? `
-                            <button onclick="deleteProduct(event, '${prod.id}')" class="px-4 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition-colors" title="حذف القطعة">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        ` : ''}
                     </div>
                 </div>
             `;
