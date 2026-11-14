@@ -109,7 +109,7 @@
                             <input type="text" id="prodPrice" required placeholder="مثال: 450 جنيه" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">اختر صور المنتج (يفضل حجم أقل من 900 كيلوبايت)</label>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">اختر صور المنتج (متعددة)</label>
                             <input type="file" id="prodImageFiles" accept="image/*" multiple required class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
                         </div>
                     </div>
@@ -150,6 +150,10 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+
+        // إعدادات Cloudinary المربوطة بحسابك
+        const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/thbfixfm/image/upload";
+        const CLOUDINARY_PRESET = "lumina_preset_1";
 
         let products = [];
 
@@ -237,18 +241,23 @@
             }).join('');
         }
 
-        // قراءة الصورة مباشرة بدون ضغط أو Canvas لمنع اللون الأخضر نهائياً
-        function readImageDirectly(file) {
-            return new Promise((resolve, reject) => {
-                if (file.size > 900 * 1024) {
-                    reject(new Error(`حجم الصورة "${file.name}" كبير جداً (${(file.size / 1024 / 1024).toFixed(2)} MB). يرجى اختيار صورة أقل من 900 كيلوبايت.`));
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = (event) => resolve(event.target.result);
-                reader.onerror = () => reject(new Error("فشل قراءة ملف الصورة من الجهاز."));
-                reader.readAsDataURL(file);
+        // دالة لرفع الصورة مباشرة إلى Cloudinary وإرجاع الرابط السحابي
+        async function uploadToCloudinary(file) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", CLOUDINARY_PRESET);
+
+            const response = await fetch(CLOUDINARY_URL, {
+                method: "POST",
+                body: formData
             });
+
+            const data = await response.json();
+            if (data.secure_url) {
+                return data.secure_url;
+            } else {
+                throw new Error("فشل رفع الصورة إلى سحابة Cloudinary.");
+            }
         }
 
         async function handleAddProduct(e) {
@@ -264,7 +273,7 @@
                 return;
             }
 
-            submitBtn.innerText = "جاري رفع ونشر المنتج...";
+            submitBtn.innerText = "جاري رفع الصور ونشر المنتج...";
             submitBtn.disabled = true;
 
             try {
@@ -272,8 +281,8 @@
                 let uploadedImages = [];
 
                 for (const file of files) {
-                    const base64Img = await readImageDirectly(file);
-                    uploadedImages.push(base64Img);
+                    const imageUrl = await uploadToCloudinary(file);
+                    uploadedImages.push(imageUrl);
                 }
 
                 await db.collection("products").add({
@@ -301,7 +310,7 @@
             if (confirm('هل أنتِ متأكدة من إزالة هذا المنتج نهائياً من المتجر؟')) {
                 db.collection("products").doc(id).delete()
                 .catch((error) => {
-                    alert("خطأ أثناء الحذف: " + error.message);
+                    alert("خطأ أثناء الحذف: " + error.message, error);
                 });
             }
         }
