@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumina Vault | جوهرة الأناقة في خزانة واحدة</title>
-    <meta name="description" content="Lumina Vault - جوهرة الأناقة في خزانة واحدة. تسوقي أحدث المنتجات الفاخرة، الملابس، الإكسسوارات، والقطع الثمينة أونلاين.">
-    <meta name="keywords" content="Lumina Vault, متجر إلكتروني, تسوق اونلاين, عرض منتجات للبيع, ملابس فاخرة, إكسسوارات, قطع ثمينة">
+    <meta name="description" content="Lumina Vault - جوهرة الأناقة في خزانة واحدة. تسوقي أحدث المنتجات الفاخرة، الملابس، الإكسسوارات، الأثاث، والقطع الثمينة أونلاين.">
+    <meta name="keywords" content="Lumina Vault, متجر إلكتروني, تسوق اونلاين, عرض منتجات للبيع, ملابس فاخرة, إكسسوارات, أثاث, قطع ثمينة">
     <meta name="author" content="Lumina Vault">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -120,7 +120,7 @@
 
     <!-- PRODUCT SHOWCASE SECTION -->
     <section id="products" class="px-4 lg:px-12 py-16 max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
             <div>
                 <h2 class="text-3xl font-black text-white flex items-center gap-3">
                     <span class="w-3 h-8 bg-yellow-400 rounded-full inline-block"></span>
@@ -133,6 +133,9 @@
                 <span class="px-3 py-1.5 rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">إجمالي المنتجات (<span id="productCount">0</span>)</span>
             </div>
         </div>
+
+        <!-- شريط تصنيفات المنتجات -->
+        <div id="categoryFilterBar" class="flex flex-wrap gap-2 mb-10"></div>
 
         <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </section>
@@ -197,11 +200,14 @@
 
         const WHATSAPP_NUMBER = "201505368073";
         let products = [];
+        let selectedCategory = 'الكل';
         let cart = JSON.parse(localStorage.getItem('lumina_cart')) || [];
+
+        const BASE_CATEGORIES = ['الكل', 'ملابس', 'إكسسوارات', 'أثاث', 'عطور ومستحضرات', 'إلكترونيات', 'أخرى'];
 
         const seoKeywords = [
             "✨ Lumina Vault", "💎 جوهرة الأناقة في خزانة واحدة", "👑 خزانة الأضواء",
-            "👗 تسوقي أفخم الملابس والقطع", "🛍️ عرض منتجات للبيع أونلاين", "🌟 تسوقي أحدث المنتجات الحصرية",
+            "👗 تسوقي أفخم الملابس والقطع", "🛋️ أثاث راقٍ وديكورات مميزة", "🛍️ عرض منتجات للبيع أونلاين",
             "🔥 اطلبي عدة طلبات معاً عبر الواتساب", "✨ تشكيلة واسعة من أروع المنتجات"
         ];
 
@@ -215,8 +221,30 @@
                 .replace(/'/g, "&#039;");
         }
 
+        // استخراج القيمة الرقمية من نص السعر لحساب المجموع بدقة
+        function parsePriceNumber(priceStr) {
+            if (!priceStr) return 0;
+            const normalized = String(priceStr)
+                .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+                .replace(/,/g, '');
+            const match = normalized.match(/(\d+(\.\d+)?)/);
+            return match ? parseFloat(match[0]) : 0;
+        }
+
+        // استخراج العملة المكتوبة في السعر (مثل: جنيه)
+        function detectCurrencyLabel(items) {
+            for (const item of items) {
+                if (item.price) {
+                    const cleaned = String(item.price).replace(/[0-9٠-٩.,\s]/g, '').trim();
+                    if (cleaned) return cleaned;
+                }
+            }
+            return 'جنيه';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             renderSEOTicker();
+            renderCategoryFilters();
             initRealtimeProducts();
             updateCartBadge();
             init3DCanvas();
@@ -228,10 +256,42 @@
                 snapshot.forEach((doc) => {
                     products.push({ id: doc.id, ...doc.data() });
                 });
+                renderCategoryFilters();
                 renderProducts();
             }, (error) => {
                 console.error("خطأ في جلب البيانات: ", error);
             });
+        }
+
+        function renderCategoryFilters() {
+            const bar = document.getElementById('categoryFilterBar');
+            const dynamicCats = products.map(p => p.category).filter(Boolean);
+            const allCategories = [...new Set([...BASE_CATEGORIES, ...dynamicCats])];
+
+            bar.innerHTML = allCategories.map(cat => {
+                const isActive = selectedCategory === cat;
+                const count = cat === 'الكل'
+                    ? products.length
+                    : products.filter(p => (p.category || 'أخرى') === cat).length;
+
+                return `
+                    <button onclick="filterByCategory('${escapeHtml(cat)}')"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all border flex items-center gap-2 ${
+                            isActive
+                                ? 'bg-yellow-500 text-black border-yellow-400 shadow-lg shadow-yellow-500/20'
+                                : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10 hover:border-yellow-500/40'
+                        }">
+                        <span>${escapeHtml(cat)}</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] ${isActive ? 'bg-black/20 text-black' : 'bg-white/10 text-slate-400'}">${count}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function filterByCategory(category) {
+            selectedCategory = category;
+            renderCategoryFilters();
+            renderProducts();
         }
 
         function init3DCanvas() {
@@ -298,21 +358,26 @@
 
         function renderProducts() {
             const grid = document.getElementById('productsGrid');
-            document.getElementById('productCount').innerText = products.length;
+            const filteredProducts = selectedCategory === 'الكل'
+                ? products
+                : products.filter(p => (p.category || 'أخرى') === selectedCategory);
 
-            if (products.length === 0) {
+            document.getElementById('productCount').innerText = filteredProducts.length;
+
+            if (filteredProducts.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 glass-card rounded-2xl">
                         <i class="fas fa-box-open text-4xl text-slate-500 mb-3"></i>
-                        <p class="text-slate-400 font-medium">لا توجد منتجات معروضة حالياً.</p>
+                        <p class="text-slate-400 font-medium">لا توجد منتجات معروضة في هذا التصنيف حالياً.</p>
                     </div>
                 `;
                 return;
             }
 
-            grid.innerHTML = products.map(prod => {
+            grid.innerHTML = filteredProducts.map(prod => {
                 const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
                 const imagesCount = (prod.images && prod.images.length > 1) ? prod.images.length : 0;
+                const catLabel = prod.category || 'أخرى';
 
                 return `
                     <div class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between relative">
@@ -322,6 +387,9 @@
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                                 <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-white/10 text-yellow-300 text-xs font-bold px-3 py-1 rounded-full">
                                     ${escapeHtml(prod.price)}
+                                </span>
+                                <span class="absolute top-3 left-3 bg-yellow-500/20 backdrop-blur-md border border-yellow-400/30 text-yellow-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                                    ${escapeHtml(catLabel)}
                                 </span>
                                 ${imagesCount > 0 ? `
                                     <span class="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md border border-white/15 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
@@ -373,6 +441,14 @@
             document.getElementById('cartBadge').innerText = totalQty;
         }
 
+        function calculateCartTotal() {
+            return cart.reduce((sum, item) => {
+                const unitPrice = parsePriceNumber(item.price);
+                const qty = item.qty || 1;
+                return sum + (unitPrice * qty);
+            }, 0);
+        }
+
         function openCartModal() {
             const modal = document.getElementById('cartModal');
             const container = document.getElementById('cartItemsContainer');
@@ -387,6 +463,9 @@
                 `;
                 footer.innerHTML = ``;
             } else {
+                const totalCost = calculateCartTotal();
+                const currency = detectCurrencyLabel(cart);
+
                 container.innerHTML = cart.map(item => `
                     <div class="flex items-center justify-between gap-4 p-3 rounded-2xl bg-white/5 border border-white/10">
                         <div class="w-16 h-16 rounded-xl overflow-hidden bg-black/40 flex-shrink-0">
@@ -406,6 +485,10 @@
                 `).join('');
 
                 footer.innerHTML = `
+                    <div class="flex items-center justify-between bg-white/5 border border-yellow-500/30 rounded-2xl px-4 py-3 mb-3">
+                        <span class="text-sm font-bold text-slate-200">التكلفة الإجمالية لجميع المنتجات:</span>
+                        <span class="text-lg font-black text-yellow-400">${totalCost.toLocaleString('en-US')} ${escapeHtml(currency)}</span>
+                    </div>
                     <button onclick="sendMultiOrderWhatsApp()" class="btn-glow-wa w-full py-3.5 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg">
                         <i class="fab fa-whatsapp text-lg"></i>
                         <span>إرسال جميع الطلبات المجمعة عبر الواتساب (${cart.length} منتجات)</span>
@@ -429,15 +512,23 @@
 
         function sendMultiOrderWhatsApp() {
             if (cart.length === 0) return;
-            let itemsText = cart.map((item, idx) => `*${idx + 1}.* ${item.name} | السعر: ${item.price} | الكمية: ${item.qty || 1}`).join('%0A');
-            const message = `مرحباً، أرغب في طلب المنتجات التالية معاً من متجر Lumina Vault:%0A%0A${itemsText}%0A%0A*رابط الصفحة:* ${window.location.href}`;
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+            const totalCost = calculateCartTotal();
+            const currency = detectCurrencyLabel(cart);
+
+            let itemsText = cart.map((item, idx) => {
+                const qty = item.qty || 1;
+                const itemSubtotal = parsePriceNumber(item.price) * qty;
+                return `*${idx + 1}.* ${item.name} | السعر: ${item.price} | الكمية: ${qty} | المجموع: ${itemSubtotal.toLocaleString('en-US')} ${currency}`;
+            }).join('\n');
+
+            const rawMessage = `مرحباً، أرغب في طلب المنتجات التالية معاً من متجر Lumina Vault:\n\n${itemsText}\n\n*إجمالي التكلفة لجميع المنتجات:* ${totalCost.toLocaleString('en-US')} ${currency}\n*رابط الصفحة:* ${window.location.href}`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(rawMessage)}`, '_blank');
         }
 
         function sendWhatsAppOrder(e, name, price) {
             if (e) e.stopPropagation();
-            const message = `مرحباً، أعجبني هذا المنتج وأريد طلبه فوراً:%0A*الاسم:* ${name}%0A*السعر:* ${price}%0A*رابط الصفحة:* ${window.location.href}`;
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+            const rawMessage = `مرحباً، أعجبني هذا المنتج وأريد طلبه فوراً:\n*الاسم:* ${name}\n*السعر:* ${price}\n*رابط الصفحة:* ${window.location.href}`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(rawMessage)}`, '_blank');
         }
 
         function openProductModal(id) {
@@ -445,6 +536,7 @@
             if (!prod) return;
 
             const imgList = (prod.images && prod.images.length > 0) ? prod.images : [prod.image];
+            const catLabel = prod.category || 'أخرى';
 
             let thumbnailsHtml = imgList.map((img, index) => `
                 <img src="${escapeHtml(img)}" onclick="changeMainImage('${escapeHtml(img)}', this)" 
@@ -456,6 +548,9 @@
                 <div class="p-6 md:p-8 space-y-5">
                     <div class="relative w-full h-72 md:h-80 rounded-2xl overflow-hidden bg-black/45 border border-white/10">
                         <img id="mainProductImage" src="${escapeHtml(imgList[0])}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover transition-all duration-300">
+                        <span class="absolute top-3 right-3 bg-yellow-500/20 backdrop-blur-md border border-yellow-400/30 text-yellow-200 text-xs font-bold px-3 py-1 rounded-full">
+                            ${escapeHtml(catLabel)}
+                        </span>
                     </div>
 
                     ${imgList.length > 1 ? `
