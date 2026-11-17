@@ -98,9 +98,22 @@
                 </div>
 
                 <form onsubmit="handleAddProduct(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">اسم المنتج</label>
-                        <input type="text" id="prodName" required placeholder="مثال: فستان سهرة / طقم إكسسوارات" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">اسم المنتج</label>
+                            <input type="text" id="prodName" required placeholder="مثال: فستان سهرة / طقم إكسسوارات / كرسي مودرن" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">تصنيف المنتج</label>
+                            <select id="prodCategory" required class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-yellow-400">
+                                <option value="ملابس">ملابس</option>
+                                <option value="إكسسوارات">إكسسوارات</option>
+                                <option value="أثاث">أثاث</option>
+                                <option value="عطور ومستحضرات">عطور ومستحضرات</option>
+                                <option value="إلكترونيات">إلكترونيات</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -123,6 +136,29 @@
                         رفع ونشر المنتج في قاعدة البيانات
                     </button>
                 </form>
+            </div>
+
+            <!-- النسخ الاحتياطي واستعادة المنتجات -->
+            <div class="glass-card rounded-3xl p-6 md:p-8 border border-white/20">
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-database text-yellow-400"></i> النسخ الاحتياطي واستعادة البيانات
+                    </h3>
+                    <p class="text-slate-400 text-xs mt-1">قم بتحميل نسخة احتياطية كاملة من جميع منتجاتك وصورها للاحتفاظ بها، أو أعد رفعها دفعة واحدة في حال تعطل قاعدة البيانات.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <button onclick="exportAllProductsBackup()" class="py-3 px-4 rounded-xl bg-emerald-600/80 hover:bg-emerald-600 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg">
+                        <i class="fas fa-download"></i>
+                        <span>تحميل نسخة احتياطية لجميع المنتجات</span>
+                    </button>
+
+                    <label id="restoreLabel" class="py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 border border-yellow-500/40 text-yellow-300 font-bold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all">
+                        <i class="fas fa-upload"></i>
+                        <span id="restoreBtnText">استعادة ورفع المنتجات من ملف النسخة</span>
+                        <input type="file" id="backupFileInput" accept=".json,application/json" onchange="importProductsBackup(event)" class="hidden">
+                    </label>
+                </div>
             </div>
 
             <!-- Manage Products -->
@@ -224,13 +260,17 @@
 
             grid.innerHTML = products.map(prod => {
                 const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
+                const catLabel = prod.category || 'أخرى';
                 return `
                     <div class="flex items-center justify-between gap-4 p-3 rounded-2xl bg-white/5 border border-white/10">
                         <div class="w-14 h-14 rounded-xl overflow-hidden bg-black/40 flex-shrink-0">
                             <img src="${escapeHtml(mainImg)}" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-sm font-bold text-white truncate">${escapeHtml(prod.name)}</h4>
+                            <div class="flex items-center gap-2">
+                                <h4 class="text-sm font-bold text-white truncate">${escapeHtml(prod.name)}</h4>
+                                <span class="text-[10px] bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 px-2 py-0.5 rounded-full flex-shrink-0">${escapeHtml(catLabel)}</span>
+                            </div>
                             <span class="text-xs text-yellow-400 font-bold">${escapeHtml(prod.price)}</span>
                         </div>
                         <button onclick="deleteProduct('${prod.id}')" class="px-3 py-2 bg-red-600/80 hover:bg-red-600 text-white rounded-xl text-xs transition-colors" title="حذف المنتج">
@@ -263,6 +303,7 @@
         async function handleAddProduct(e) {
             e.preventDefault();
             const name = document.getElementById('prodName').value;
+            const category = document.getElementById('prodCategory').value;
             const price = document.getElementById('prodPrice').value;
             const desc = document.getElementById('prodDesc').value;
             const fileInput = document.getElementById('prodImageFiles');
@@ -287,6 +328,7 @@
 
                 await db.collection("products").add({
                     name: name,
+                    category: category,
                     price: price,
                     description: desc,
                     images: uploadedImages,
@@ -303,6 +345,85 @@
                 alert("حدث خطأ أثناء رفع المنتج: " + error.message);
                 submitBtn.innerText = "رفع ونشر المنتج في قاعدة البيانات";
                 submitBtn.disabled = false;
+            }
+        }
+
+        // تحميل نسخة احتياطية من جميع المنتجات بصيغة JSON
+        function exportAllProductsBackup() {
+            if (products.length === 0) {
+                alert("لا توجد منتجات حالياً لتصديرها!");
+                return;
+            }
+
+            const cleanBackup = products.map(({ id, createdAt, ...rest }) => rest);
+            const backupPayload = {
+                store: "Lumina Vault",
+                exportedAt: new Date().toISOString(),
+                count: cleanBackup.length,
+                products: cleanBackup
+            };
+
+            const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const dateStamp = new Date().toISOString().slice(0, 10);
+            link.href = url;
+            link.download = `lumina-vault-backup-${dateStamp}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // استعادة المنتجات من ملف النسخة الاحتياطية ورفعها جميعاً
+        async function importProductsBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const btnText = document.getElementById('restoreBtnText');
+            const originalText = btnText.innerText;
+
+            try {
+                const text = await file.text();
+                const parsed = JSON.parse(text);
+                const itemsToRestore = Array.isArray(parsed) ? parsed : parsed.products;
+
+                if (!Array.isArray(itemsToRestore) || itemsToRestore.length === 0) {
+                    alert("ملف النسخة الاحتياطية غير صالح أو لا يحتوي على منتجات.");
+                    event.target.value = "";
+                    return;
+                }
+
+                if (!confirm(`سيتم رفع واستعادة (${itemsToRestore.length}) منتج إلى قاعدة البيانات. هل تريد المتابعة؟`)) {
+                    event.target.value = "";
+                    return;
+                }
+
+                btnText.innerText = "جاري استعادة ورفع المنتجات...";
+
+                for (const item of itemsToRestore) {
+                    const imgs = Array.isArray(item.images) && item.images.length > 0
+                        ? item.images
+                        : (item.image ? [item.image] : []);
+
+                    await db.collection("products").add({
+                        name: item.name || "منتج مستعاد",
+                        category: item.category || "أخرى",
+                        price: item.price || "0 جنيه",
+                        description: item.description || "",
+                        images: imgs,
+                        image: imgs[0] || "",
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                alert(`✅ تمت استعادة ورفع (${itemsToRestore.length}) منتج بنجاح!`);
+            } catch (error) {
+                console.error("خطأ في الاستعادة:", error);
+                alert("حدث خطأ أثناء قراءة أو رفع ملف النسخة الاحتياطية: " + error.message);
+            } finally {
+                btnText.innerText = originalText;
+                event.target.value = "";
             }
         }
 
