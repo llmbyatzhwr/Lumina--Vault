@@ -221,6 +221,13 @@
                 .replace(/'/g, "&#039;");
         }
 
+        // ضغط وتحسين روابط Cloudinary تلقائياً بصيغة f_auto,q_auto,w_800 لتسريع التحميل
+        function optimizeCloudinaryUrl(url, width = 800) {
+            if (!url || !url.includes('res.cloudinary.com')) return url;
+            if (url.includes('/upload/f_auto,q_auto')) return url;
+            return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+        }
+
         // استخراج القيمة الرقمية من نص السعر لحساب المجموع بدقة
         function parsePriceNumber(priceStr) {
             if (!priceStr) return 0;
@@ -375,7 +382,8 @@
             }
 
             grid.innerHTML = filteredProducts.map(prod => {
-                const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
+                const rawMainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : prod.image;
+                const mainImg = optimizeCloudinaryUrl(rawMainImg, 800);
                 const imagesCount = (prod.images && prod.images.length > 1) ? prod.images.length : 0;
                 const catLabel = prod.category || 'أخرى';
 
@@ -383,7 +391,7 @@
                     <div class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between relative">
                         <div onclick="openProductModal('${prod.id}')" class="cursor-pointer">
                             <div class="relative h-64 overflow-hidden bg-black/45">
-                                <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(prod.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(prod.name)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60"></div>
                                 <span class="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-white/10 text-yellow-300 text-xs font-bold px-3 py-1 rounded-full">
                                     ${escapeHtml(prod.price)}
@@ -469,7 +477,7 @@
                 container.innerHTML = cart.map(item => `
                     <div class="flex items-center justify-between gap-4 p-3 rounded-2xl bg-white/5 border border-white/10">
                         <div class="w-16 h-16 rounded-xl overflow-hidden bg-black/40 flex-shrink-0">
-                            <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}" class="w-full h-full object-cover">
+                            <img src="${escapeHtml(optimizeCloudinaryUrl(item.image, 300))}" alt="${escapeHtml(item.name)}" class="w-full h-full object-cover">
                         </div>
                         <div class="flex-1 min-w-0">
                             <h4 class="text-sm font-bold text-white truncate">${escapeHtml(item.name)}</h4>
@@ -535,7 +543,8 @@
             const prod = products.find(p => p.id === id);
             if (!prod) return;
 
-            const imgList = (prod.images && prod.images.length > 0) ? prod.images : [prod.image];
+            const rawImgList = (prod.images && prod.images.length > 0) ? prod.images : [prod.image];
+            const imgList = rawImgList.map(img => optimizeCloudinaryUrl(img, 800));
             const catLabel = prod.category || 'أخرى';
 
             let thumbnailsHtml = imgList.map((img, index) => `
